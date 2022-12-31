@@ -5,6 +5,15 @@ import EditScreenInfo from '../components/EditScreenInfo';
 import { RootTabScreenProps } from '../types';
 import { View, Input, FormControl, Select, Flex, Button } from 'native-base';
 import { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// add workout
+
+// - name
+// - select day
+// - no of sets
+// - no of reps
+// if no of reps ===
 
 export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
 	const [workout, setWorkout] = useState<string>('');
