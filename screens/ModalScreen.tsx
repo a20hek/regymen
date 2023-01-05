@@ -1,79 +1,157 @@
 import { StatusBar } from 'expo-status-bar';
-// import { Platform, StyleSheet } from 'react-native';
+import { View, Input, FormControl, Select, Flex, Button, Text } from 'native-base';
+import { useState, useCallback } from 'react';
 
-// import EditScreenInfo from '../components/EditScreenInfo';
-// import { Text, View } from '../components/Themed';
-import { View, Input, FormControl, Select, Flex, Button } from 'native-base';
-import { useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Workout } from '../models/Workout';
+import { WorkoutRealmContext } from '../models';
 
-export default function ModalScreen() {
-	const [workout, setWorkout] = useState<string>('');
-	const [day, setDay] = useState<string>('');
-	const [sets, setSets] = useState<number>(0);
-	const [reps, setReps] = useState<number>(0);
+import { useForm, Controller } from 'react-hook-form';
 
-	const handleChangeWorkout = (text: string) => {
-		setWorkout(text);
-	};
-	const handleChangeSets = (text: string) => {
-		setSets(parseInt(text, 10));
-	};
-	const handleChangeReps = (text: string) => {
-		setReps(parseInt(text, 10));
-	};
+export default function ModalScreen({ navigation }: { navigation: any }) {
+	const { useRealm } = WorkoutRealmContext;
+	const realm = useRealm();
+
+	const handleAddWorkout = useCallback(
+		(data: { name: string; day: string; sets: number; reps: number }) => {
+			const { name, day, sets, reps } = data;
+			realm.write(() => {
+				realm.create('Workout', Workout.generate(name, day, sets, reps));
+			});
+		},
+
+		[realm]
+	);
+
+	interface FormData {
+		name: string;
+		day: string;
+		sets: number;
+		reps: number;
+	}
+
+	const {
+		control,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm({
+		defaultValues: {
+			name: '',
+			day: '',
+			sets: NaN,
+			reps: NaN,
+		},
+	});
 
 	return (
 		<View p='8' bg='#000' minH='full'>
 			<FormControl>
 				<FormControl.Label>Workout</FormControl.Label>
-				<Input
-					color='#fff'
-					value={workout}
-					mb='2'
-					onChangeText={handleChangeWorkout}
-					placeholder='Inclined Bench Press'
+				<Controller
+					control={control}
+					rules={{ required: true }}
+					name='name'
+					render={({ field: { onChange, onBlur, value } }) => (
+						<Input
+							color='#fff'
+							value={value}
+							mb='2'
+							onBlur={onBlur}
+							onChangeText={(val) => onChange(val)}
+							placeholder='Inclined Bench Press'
+						/>
+					)}
 				/>
+				{errors.name && (
+					<Text color='red.500' fontWeight='light' fontSize='12px'>
+						{errors.name.message}
+					</Text>
+				)}
+
 				<FormControl.Label>Day</FormControl.Label>
-				<Select
-					accessibilityLabel='Day'
-					placeholder='Day'
-					mb='2'
-					selectedValue={day}
-					color='#fff'
-					onValueChange={(itemValue) => setDay(itemValue)}>
-					<Select.Item label='PUSH' value='push' />
-					<Select.Item label='PULL' value='pull' />
-					<Select.Item label='LEGS' value='legs' />
-				</Select>
+
+				<Controller
+					control={control}
+					rules={{ required: true }}
+					name='day'
+					render={({ field: { onChange, onBlur, value } }) => (
+						<Select
+							accessibilityLabel='Day'
+							placeholder='Day'
+							mb='2'
+							onValueChange={(val) => onChange(val)}
+							selectedValue={value}
+							color='#fff'>
+							<Select.Item label='PUSH' value='push' />
+							<Select.Item label='PULL' value='pull' />
+							<Select.Item label='LEGS' value='legs' />
+						</Select>
+					)}
+				/>
+				{errors.day && (
+					<Text color='red.500' fontWeight='light' fontSize='12px'>
+						{errors.day.message}
+					</Text>
+				)}
 				<Flex direction='row'>
 					<Flex>
 						<FormControl.Label>Sets</FormControl.Label>
-						<Input
-							placeholder='3'
-							mb='2'
-							w='48px'
-							mr='8'
-							color='#fff'
-							keyboardType='numeric'
-							value={!isNaN(sets) ? String(sets) : ''}
-							onChangeText={handleChangeSets}
+						<Controller
+							control={control}
+							rules={{ required: true }}
+							name='sets'
+							render={({ field: { onChange, onBlur, value } }) => (
+								<Input
+									placeholder='3'
+									mb='2'
+									w='48px'
+									mr='8'
+									color='#fff'
+									keyboardType='numeric'
+									onBlur={onBlur}
+									onChangeText={(val) => onChange(parseInt(val, 10))}
+									value={!isNaN(value) ? String(value) : ''}
+								/>
+							)}
 						/>
+						{errors.sets && (
+							<Text color='red.500' fontWeight='light' fontSize='12px'>
+								{errors.sets.message}
+							</Text>
+						)}
 					</Flex>
 					<Flex>
 						<FormControl.Label>Reps</FormControl.Label>
-						<Input
-							placeholder='12'
-							mb='2'
-							color='#fff'
-							w='48px'
-							value={!isNaN(reps) ? String(reps) : ''}
-							onChangeText={handleChangeReps}
+						<Controller
+							control={control}
+							rules={{ required: true }}
+							name='reps'
+							render={({ field: { onChange, onBlur, value } }) => (
+								<Input
+									placeholder='12'
+									mb='2'
+									color='#fff'
+									w='48px'
+									onBlur={onBlur}
+									onChangeText={(val) => onChange(parseInt(val, 10))}
+									value={!isNaN(value) ? String(value) : ''}
+								/>
+							)}
 						/>
+						{errors.reps && (
+							<Text color='red.500' fontWeight='light' fontSize='12px'>
+								{errors.reps.message}
+							</Text>
+						)}
 					</Flex>
 				</Flex>
 			</FormControl>
-			<Button variant='outline' color='#fff' _text={{ color: '#fff' }} my='8'>
+			<Button
+				variant='outline'
+				color='#fff'
+				_text={{ color: '#fff' }}
+				my='8'
+				onPress={handleSubmit(handleAddWorkout)}>
 				Add Workout
 			</Button>
 		</View>

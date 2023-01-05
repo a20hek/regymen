@@ -1,14 +1,25 @@
 import { Realm } from '@realm/react';
 
 export class Workout extends Realm.Object {
-	_id: Realm.BSON.ObjectId = new Realm.BSON.ObjectId();
+	_id!: Realm.BSON.ObjectId;
 	name!: string;
-	day!: 'PUSH' | 'PULL' | 'LEGS' | 'REST';
+	day!: string;
 	sets!: number;
 	reps!: number;
-	createdAt: Date = new Date();
+	createdAt!: Date;
 
-	// static primaryKey = '_id';
+	static primaryKey = '_id';
+
+	static generate(name: string, day: string, sets: number, reps: number) {
+		return {
+			_id: new Realm.BSON.ObjectId(),
+			name,
+			day,
+			sets,
+			reps,
+			createdAt: new Date(),
+		};
+	}
 
 	static schema = {
 		name: 'Workout',
