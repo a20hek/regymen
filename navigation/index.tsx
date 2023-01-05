@@ -21,9 +21,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 	return (
-		<NavigationContainer
-			linking={LinkingConfiguration}
-			theme={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+		<NavigationContainer linking={LinkingConfiguration} theme={DarkTheme}>
 			<RootNavigator />
 		</NavigationContainer>
 	);
