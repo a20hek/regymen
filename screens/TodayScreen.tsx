@@ -73,9 +73,9 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 				onClose={() => setModalVisible(false)}
 				size='full'
 				h='100%'
-				flex={1}
-				bgColor='#000'>
-				<Modal.Content bgColor='#000'>
+				// flex={1}
+				bgColor='#0d0d0d'>
+				<Modal.Content bgColor='#0d0d0d'>
 					<Heading
 						color='#fff'
 						textAlign='center'
@@ -128,24 +128,31 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 	console.log(workouts, workoutSplit);
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
-			<SplashModal />
-			<FlatList
-				data={day}
-				keyExtractor={(day) => day._id.toString()}
-				renderItem={({ item }) => (
-					<>
-						<Text color='#fff'>{item.name}</Text>
-					</>
-				)}
-			/>
-			<Fab
-				renderInPortal={false}
-				shadow={2}
-				size='sm'
-				icon={<Icon color='white' as={AntDesign} name='plus' size='md' />}
-				onPress={() => navigation.navigate('Modal')}
-			/>
+		<SafeAreaView>
+			<View h='full' p={4} bg='#0d0d0d'>
+				<SplashModal />
+				<FlatList
+					data={day}
+					keyExtractor={(day) => day._id.toString()}
+					renderItem={({ item }) => (
+						<>
+							<Text fontSize='18px' color='#fff'>
+								{item.name}
+							</Text>
+						</>
+					)}
+				/>
+				<Fab
+					renderInPortal={false}
+					colorScheme='dark'
+					bgColor='gray.200'
+					rounded='lg'
+					shadow={4}
+					p={3}
+					icon={<Icon color='black' as={AntDesign} name='plus' size='md' />}
+					onPress={() => navigation.navigate('Modal')}
+				/>
+			</View>
 		</SafeAreaView>
 	);
 }

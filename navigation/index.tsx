@@ -73,7 +73,7 @@ function BottomTabNavigator() {
 				component={TodayScreen}
 				options={({ navigation }: RootTabScreenProps<'Today'>) => ({
 					headerShown: false,
-					title: 'Tab One',
+					title: 'Today',
 					tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
 					headerRight: () => (
 						<Pressable

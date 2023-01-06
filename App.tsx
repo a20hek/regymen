@@ -8,6 +8,17 @@ import { NativeBaseProvider } from 'native-base';
 import { Realm, createRealmContext } from '@realm/react';
 import { WorkoutRealmContext } from './models';
 import { StyleSheet } from 'react-native';
+import {
+	useFonts,
+	Inter_400Regular,
+	Inter_500Medium,
+	Inter_600SemiBold,
+	Inter_700Bold,
+	Inter_300Light,
+	Inter_200ExtraLight,
+} from '@expo-google-fonts/inter';
+
+import { theme } from './theme';
 
 export default function App() {
 	const isLoadingComplete = useCachedResources();
@@ -15,14 +26,23 @@ export default function App() {
 
 	const { RealmProvider } = WorkoutRealmContext;
 
-	if (!isLoadingComplete) {
+	let [fontsLoaded] = useFonts({
+		Inter_200ExtraLight,
+		Inter_300Light,
+		Inter_400Regular,
+		Inter_500Medium,
+		Inter_600SemiBold,
+		Inter_700Bold,
+	});
+
+	if (!isLoadingComplete && !fontsLoaded) {
 		return null;
 	} else {
 		return (
 			<SafeAreaProvider>
 				<RealmProvider>
 					<StatusBar style='light' />
-					<NativeBaseProvider>
+					<NativeBaseProvider theme={theme}>
 						<Navigation colorScheme={colorScheme} />
 					</NativeBaseProvider>
 				</RealmProvider>
