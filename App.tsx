@@ -7,6 +7,7 @@ import Navigation from './navigation';
 import { NativeBaseProvider } from 'native-base';
 import { Realm, createRealmContext } from '@realm/react';
 import { WorkoutRealmContext } from './models';
+import { StyleSheet } from 'react-native';
 
 export default function App() {
 	const isLoadingComplete = useCachedResources();
@@ -20,9 +21,9 @@ export default function App() {
 		return (
 			<SafeAreaProvider>
 				<RealmProvider>
+					<StatusBar style='light' />
 					<NativeBaseProvider>
 						<Navigation colorScheme={colorScheme} />
-						<StatusBar />
 					</NativeBaseProvider>
 				</RealmProvider>
 			</SafeAreaProvider>

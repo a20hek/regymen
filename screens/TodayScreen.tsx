@@ -13,11 +13,13 @@ import {
 	Modal,
 	Heading,
 } from 'native-base';
+import { StatusBar } from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { WorkoutRealmContext } from '../models';
 import { Workout } from '../models/Workout';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // add workout
 
@@ -27,7 +29,7 @@ import { Workout } from '../models/Workout';
 // - no of reps
 // if no of reps ===
 
-export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'>) {
+export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>) {
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 	const [workoutSplit, setWorkoutSplit] = useState<string | null>(null);
 
@@ -64,12 +66,8 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 		// }
 	};
 
-	const { useQuery } = WorkoutRealmContext;
-	const workouts = useQuery(Workout);
-	const day = workouts.filtered(`day == '${workoutSplit}'`);
-	console.log(workouts, workoutSplit);
-	return (
-		<>
+	const SplashModal = () => {
+		return (
 			<Modal
 				isOpen={isModalVisible}
 				onClose={() => setModalVisible(false)}
@@ -121,10 +119,25 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 					</Button>
 				</Modal.Content>
 			</Modal>
+		);
+	};
+
+	const { useQuery } = WorkoutRealmContext;
+	const workouts = useQuery(Workout);
+	const day = workouts.filtered(`day == '${workoutSplit}'`);
+	console.log(workouts, workoutSplit);
+
+	return (
+		<SafeAreaView style={{ flex: 1 }}>
+			<SplashModal />
 			<FlatList
 				data={day}
 				keyExtractor={(day) => day._id.toString()}
-				renderItem={({ item }) => <Text color='#fff'>{item.name}</Text>}
+				renderItem={({ item }) => (
+					<>
+						<Text color='#fff'>{item.name}</Text>
+					</>
+				)}
 			/>
 			<Fab
 				renderInPortal={false}
@@ -133,6 +146,6 @@ export default function TabOneScreen({ navigation }: RootTabScreenProps<'TabOne'
 				icon={<Icon color='white' as={AntDesign} name='plus' size='md' />}
 				onPress={() => navigation.navigate('Modal')}
 			/>
-		</>
+		</SafeAreaView>
 	);
 }

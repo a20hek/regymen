@@ -3,6 +3,7 @@ import { View, Input, FormControl, Select, Flex, Button, Text } from 'native-bas
 import { useState, useCallback } from 'react';
 
 import { Workout } from '../models/Workout';
+import { Set } from '../models/Set';
 import { WorkoutRealmContext } from '../models';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -12,11 +13,12 @@ export default function ModalScreen({ navigation }: { navigation: any }) {
 	const realm = useRealm();
 
 	const handleAddWorkout = useCallback(
-		(data: { name: string; day: string; sets: number; reps: number }) => {
-			const { name, day, sets, reps } = data;
+		(data: { name: string; day: string; sets: number; reps: number; weight: number }) => {
+			const { name, day, sets, reps, weight } = data;
 			realm.write(() => {
-				realm.create('Workout', Workout.generate(name, day, sets, reps));
+				realm.create('Workout', Workout.generate(name, day, sets, reps, weight));
 			});
+			navigation.navigate('Today');
 		},
 
 		[realm]
@@ -40,6 +42,7 @@ export default function ModalScreen({ navigation }: { navigation: any }) {
 			day: '',
 			sets: NaN,
 			reps: NaN,
+			weight: NaN,
 		},
 	});
 
@@ -117,6 +120,30 @@ export default function ModalScreen({ navigation }: { navigation: any }) {
 						{errors.sets && (
 							<Text color='red.500' fontWeight='light' fontSize='12px'>
 								{errors.sets.message}
+							</Text>
+						)}
+					</Flex>
+					<Flex>
+						<FormControl.Label>Weight</FormControl.Label>
+						<Controller
+							control={control}
+							rules={{ required: true }}
+							name='weight'
+							render={({ field: { onChange, onBlur, value } }) => (
+								<Input
+									placeholder='12'
+									mb='2'
+									color='#fff'
+									w='48px'
+									onBlur={onBlur}
+									onChangeText={(val) => onChange(parseInt(val, 10))}
+									value={!isNaN(value) ? String(value) : ''}
+								/>
+							)}
+						/>
+						{errors.weight && (
+							<Text color='red.500' fontWeight='light' fontSize='12px'>
+								{errors.weight.message}
 							</Text>
 						)}
 					</Flex>
