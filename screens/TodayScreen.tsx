@@ -12,26 +12,32 @@ import {
 	Text,
 	Modal,
 	Heading,
+	Box,
+	Divider,
+	IconButton,
+	PresenceTransition,
 } from 'native-base';
+import { Animated, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { StatusBar } from 'react-native';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { Entypo } from '@expo/vector-icons';
 import { WorkoutRealmContext } from '../models';
 import { Workout } from '../models/Workout';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Realm } from '@realm/react';
+import { useValue, timing, Transition } from 'react-native-reanimated';
 
-// add workout
-
-// - name
-// - select day
-// - no of sets
-// - no of reps
-// if no of reps ===
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+	UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>) {
 	const [isModalVisible, setModalVisible] = useState<boolean>(false);
 	const [workoutSplit, setWorkoutSplit] = useState<string | null>(null);
+
+	const [expandedItems, setExpandedItems] = useState<any[]>([]);
 
 	const checkModal = async () => {
 		try {
@@ -127,20 +133,136 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 	const day = workouts.filtered(`day == '${workoutSplit}'`);
 	console.log(workouts, workoutSplit);
 
+	const toggleExpanded = (item: any) => {
+		if (expandedItems.includes(item)) {
+			setExpandedItems(expandedItems.filter((i) => i !== item));
+		}
+	};
+
+	interface ExpandableFlatListProps {
+		data: Realm.Results<Workout & Realm.Object>;
+		renderItem: (props: {
+			item: any;
+			expanded: boolean;
+			toggleExpanded: (item: any) => void;
+		}) => JSX.Element;
+		keyExtractor: (item: any) => string;
+	}
+
+	const ExpandableFlatList: React.FC<ExpandableFlatListProps> = ({
+		data,
+		renderItem,
+		keyExtractor,
+	}) => {
+		const [expandedItems, setExpandedItems] = useState<any[]>([]);
+
+		const toggleExpanded = (item: any) => {
+			if (expandedItems.includes(item)) {
+				LayoutAnimation.configureNext({
+					duration: 250,
+					update: {
+						type: 'easeInEaseOut',
+					},
+				});
+				setExpandedItems(expandedItems.filter((i) => i !== item));
+			} else {
+				LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+				setExpandedItems([...expandedItems, item]);
+			}
+		};
+
+		return (
+			<FlatList
+				data={data}
+				keyExtractor={keyExtractor}
+				renderItem={({ item }) => {
+					const expanded = expandedItems.includes(item);
+					return renderItem({ item, expanded, toggleExpanded });
+				}}
+			/>
+		);
+	};
+
+	const renderItem = ({
+		item,
+		expanded,
+		toggleExpanded,
+	}: {
+		item: any;
+		expanded: boolean;
+		toggleExpanded: (item: any) => void;
+	}) => {
+		return (
+			<View
+				borderWidth='1px'
+				borderRadius='xl'
+				borderColor='#383838'
+				px='16px'
+				py='24px'
+				my='12px'>
+				<Flex flexDir='row' justifyContent='space-between'>
+					<Text fontSize='24px' color='#fff'>
+						{item.name}
+					</Text>
+					<IconButton
+						borderWidth='1px'
+						borderRadius='full'
+						h='40px'
+						w='40px'
+						borderColor='gray.500'
+						icon={
+							expanded ? (
+								<Icon
+									color='gray.300'
+									as={Entypo}
+									name='chevron-small-up'
+									size='md'
+								/>
+							) : (
+								<Icon
+									color='gray.300'
+									as={Entypo}
+									name='chevron-small-down'
+									size='md'
+								/>
+							)
+						}
+						onPress={() => toggleExpanded(item)}
+					/>
+				</Flex>
+				{expanded ? (
+					<View
+						mx='6px'
+						mt='16px'
+						mb='8px'
+						bg='#1a1a1a'
+						borderRadius='xl'
+						py='24px'
+						px='16px'>
+						<Text fontSize='18px' color='#fff'>
+							{item.weight}
+						</Text>
+					</View>
+				) : null}
+			</View>
+		);
+	};
+
+	const keyExtractor = (day: any) => day._id.toString();
+
+	const data = day;
+
 	return (
 		<SafeAreaView>
-			<View h='full' p={4} bg='#0d0d0d'>
+			<View h='full' py={4} px='12px' bg='#0d0d0d'>
 				<SplashModal />
-				<FlatList
-					data={day}
-					keyExtractor={(day) => day._id.toString()}
-					renderItem={({ item }) => (
-						<>
-							<Text fontSize='18px' color='#fff'>
-								{item.name}
-							</Text>
-						</>
-					)}
+				<Text fontSize='42px' fontFamily='Inter_300Light' mt='60px'>
+					Today
+				</Text>
+				<ExpandableFlatList
+					data={data}
+					renderItem={renderItem}
+					keyExtractor={keyExtractor}
 				/>
 				<Fab
 					renderInPortal={false}
