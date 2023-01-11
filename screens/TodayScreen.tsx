@@ -25,9 +25,11 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import { Entypo } from '@expo/vector-icons';
 import { WorkoutRealmContext } from '../models';
 import { Workout } from '../models/Workout';
+import { Set } from '../models/Set';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Realm } from '@realm/react';
 import { useValue, timing, Transition } from 'react-native-reanimated';
+import { useForm, Controller } from 'react-hook-form';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
 	UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -130,6 +132,7 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 
 	const { useQuery } = WorkoutRealmContext;
 	const workouts = useQuery(Workout);
+	const sets = useQuery(Set);
 	const day = workouts.filtered(`day == '${workoutSplit}'`);
 	console.log(workouts, workoutSplit);
 
@@ -140,7 +143,7 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 	};
 
 	interface ExpandableFlatListProps {
-		data: Realm.Results<Workout & Realm.Object>;
+		data: Realm.Results<Workout & Set & Realm.Object>;
 		renderItem: (props: {
 			item: any;
 			expanded: boolean;
@@ -182,6 +185,21 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 			/>
 		);
 	};
+
+	const {
+		control,
+		handleSubmit,
+		reset,
+		formState: { errors },
+	} = useForm({
+		defaultValues: {
+			name: '',
+			day: '',
+			sets: NaN,
+			reps: NaN,
+			weight: NaN,
+		},
+	});
 
 	const renderItem = ({
 		item,
@@ -239,9 +257,25 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 						borderRadius='xl'
 						py='24px'
 						px='16px'>
-						<Text fontSize='18px' color='#fff'>
-							{item.weight}
-						</Text>
+						<Flex flexDir='row'>
+							<View>
+								<FormControl>
+									<FormControl.Label>Weight</FormControl.Label>
+									<Input value={item.weight} />
+								</FormControl>
+							</View>
+							<View>
+								{item.setsData.map((set: any) => {
+									return (
+										<View key={set.name}>
+											<Text color='#fff'>
+												{set.name},{set.reps}
+											</Text>
+										</View>
+									);
+								})}
+							</View>
+						</Flex>
 					</View>
 				) : null}
 			</View>
