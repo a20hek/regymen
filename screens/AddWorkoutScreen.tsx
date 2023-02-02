@@ -19,7 +19,7 @@ import { WorkoutRealmContext } from '../models';
 import { useForm, Controller } from 'react-hook-form';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function ModalScreen({ navigation }: { navigation: any }) {
+export default function AddWorkoutScreen({ navigation }: { navigation: any }) {
 	const { useRealm } = WorkoutRealmContext;
 	const realm = useRealm();
 
@@ -210,7 +210,7 @@ export default function ModalScreen({ navigation }: { navigation: any }) {
 						fontSize: '16px',
 						fontFamily: 'Inter_500Medium',
 					}}
-					// colorScheme='white'
+					colorScheme='gray'
 					bg='gray.300'
 					borderRadius='lg'
 					borderColor='gray.300'

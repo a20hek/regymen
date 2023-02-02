@@ -51,6 +51,7 @@ export const SplashModal = ({ setWorkoutSplit }: { setWorkoutSplit: any }) => {
 					Select Workout Day
 				</Heading>
 				<Button
+					colorScheme='gray'
 					w='75%'
 					mx='auto'
 					my='12px'
@@ -62,6 +63,7 @@ export const SplashModal = ({ setWorkoutSplit }: { setWorkoutSplit: any }) => {
 					Push
 				</Button>
 				<Button
+					colorScheme='gray'
 					w='75%'
 					mx='auto'
 					my='12px'
@@ -73,6 +75,7 @@ export const SplashModal = ({ setWorkoutSplit }: { setWorkoutSplit: any }) => {
 					Pull
 				</Button>
 				<Button
+					colorScheme='gray'
 					w='75%'
 					py='20px'
 					mx='auto'

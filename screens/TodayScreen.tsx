@@ -8,8 +8,6 @@ import { Workout } from '../models/Workout';
 import { Set } from '../models/Set';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Realm } from '@realm/react';
-import { useForm, Controller } from 'react-hook-form';
-
 import { ExpandableFlatList } from '../components/ExpandableFlatList';
 import { SplashModal } from '../components/SplashModal';
 import WorkoutCard from '../components/WorkoutCard';
@@ -25,22 +23,7 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 	const workouts = useQuery(Workout);
 	const sets = useQuery(Set);
 	const day = workouts.filtered(`day == '${workoutSplit}'`);
-	console.log(workouts, workoutSplit);
-
-	const {
-		control,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm({
-		defaultValues: {
-			name: '',
-			day: '',
-			sets: NaN,
-			reps: NaN,
-			weight: NaN,
-		},
-	});
+	console.log(workouts);
 
 	const renderItem = ({
 		item,
@@ -78,7 +61,7 @@ export default function TodayScreen({ navigation }: RootTabScreenProps<'Today'>)
 					shadow={4}
 					p={3}
 					icon={<Icon color='black' as={AntDesign} name='plus' size='md' />}
-					onPress={() => navigation.navigate('Modal')}
+					onPress={() => navigation.navigate('Add Workout')}
 				/>
 			</View>
 		</SafeAreaView>

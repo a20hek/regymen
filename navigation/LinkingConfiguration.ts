@@ -27,7 +27,7 @@ const linking: LinkingOptions<RootStackParamList> = {
 					},
 				},
 			},
-			Modal: 'modal',
+			'Add Workout': 'modal',
 			NotFound: '*',
 		},
 	},

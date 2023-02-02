@@ -12,7 +12,7 @@ import { ColorSchemeName, Pressable } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import ModalScreen from '../screens/ModalScreen';
+import AddWorkoutScreen from '../screens/AddWorkoutScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import TodayScreen from '../screens/TodayScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
@@ -44,8 +44,8 @@ function RootNavigator() {
 			<Stack.Screen name='NotFound' component={NotFoundScreen} options={{ title: 'Oops!' }} />
 			<Stack.Group screenOptions={{ presentation: 'modal' }}>
 				<Stack.Screen
-					name='Modal'
-					component={ModalScreen}
+					name='Add Workout'
+					component={AddWorkoutScreen}
 					options={{ headerShown: false }}
 				/>
 			</Stack.Group>
@@ -77,7 +77,7 @@ function BottomTabNavigator() {
 					tabBarIcon: ({ color }) => <TabBarIcon name='code' color={color} />,
 					headerRight: () => (
 						<Pressable
-							onPress={() => navigation.navigate('Modal')}
+							onPress={() => navigation.navigate('Add Workout')}
 							style={({ pressed }) => ({
 								opacity: pressed ? 0.5 : 1,
 							})}>
