@@ -1,0 +1,8 @@
+node_modules
+*.log
+yarn-debug.log*
+yarn-error.log*
+dist
+coverage
+.build
+.expo
